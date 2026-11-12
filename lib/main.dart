@@ -8,6 +8,64 @@ import 'screens/splash.dart';
 import 'firebase_options.dart';
 import 'screens/auth.dart';
 
+const _seedColor = Color(0xFF5B3FD0);
+
+ThemeData _buildTheme(Brightness brightness) {
+  final scheme = ColorScheme.fromSeed(
+    seedColor: _seedColor,
+    brightness: brightness,
+  );
+  final inputBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(16),
+    borderSide: BorderSide.none,
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: scheme,
+    scaffoldBackgroundColor: scheme.surface,
+    appBarTheme: AppBarTheme(
+      centerTitle: false,
+      elevation: 0,
+      scrolledUnderElevation: 1,
+      backgroundColor: scheme.surface,
+      foregroundColor: scheme.onSurface,
+      titleTextStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: scheme.onSurface,
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: scheme.surfaceContainerHighest.withAlpha(120),
+      border: inputBorder,
+      enabledBorder: inputBorder,
+      focusedBorder: inputBorder.copyWith(
+        borderSide: BorderSide(color: scheme.primary, width: 1.5),
+      ),
+      errorBorder: inputBorder.copyWith(
+        borderSide: BorderSide(color: scheme.error),
+      ),
+      focusedErrorBorder: inputBorder.copyWith(
+        borderSide: BorderSide(color: scheme.error, width: 1.5),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+  );
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -21,22 +79,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FlutterChat',
-      theme: ThemeData().copyWith(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 63, 17, 177),
-          primary: const Color.fromARGB(255, 63, 17, 177),
-          onPrimary: const Color.fromARGB(255, 255, 255, 255),
-          onSecondary: const Color.fromARGB(255, 0, 0, 0),
-          secondary: const Color.fromARGB(255, 255, 255, 255),
-          onBackground: const Color.fromARGB(255, 0, 0, 0),
-          background: const Color.fromARGB(255, 255, 255, 255),
-          onSurface: const Color.fromARGB(255, 0, 0, 0),
-          surface: const Color.fromARGB(255, 255, 255, 255),
-          error: const Color.fromARGB(255, 255, 0, 0),
-          onError: const Color.fromARGB(255, 255, 255, 255),
-          brightness: Brightness.light,
-        ),
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: _buildTheme(Brightness.light),
+      darkTheme: _buildTheme(Brightness.dark),
+      themeMode: ThemeMode.system,
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
